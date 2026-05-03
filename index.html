@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<title>Commandes — Brasserie</title>
+<link rel="manifest" href="/manifest.json"/>
+<meta name="theme-color" content="#c8860a"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Commandes"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f0f0f;color:#f0ead6;font-family:Georgia,serif;-webkit-tap-highlight-color:transparent}
+button,input,select{font-family:Georgia,serif;color:#f0ead6}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button{opacity:1}
+.hdr{background:linear-gradient(135deg,#1a0a00,#2d1200,#1a0a00);border-bottom:1px solid #8b4513;padding:12px 12px 0}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.h-left .sub{font-size:10px;letter-spacing:3px;color:#c8860a;text-transform:uppercase}
+.h-left .title{font-size:19px;font-weight:normal;color:#f5deb3;margin:2px 0}
+.h-left .week{font-size:10px;color:#a0826d}
+.h-right{text-align:right}
+.h-right .blabel{font-size:9px;color:#a0826d;text-transform:uppercase;letter-spacing:1px}
+.h-right .bamt{font-size:22px;color:#c8860a;font-weight:bold;line-height:1}
+.exim{display:flex;gap:5px;margin-top:5px;justify-content:flex-end}
+.exim button,.exim label{background:transparent;border:1px solid #8b4513;color:#c8860a;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:10px;font-family:Georgia,serif}
+.exim label{border-color:#3a2a1a;color:#a0826d}
+.alrt{margin:8px 0 0;background:rgba(200,60,0,0.12);border:1px solid #8b2500;border-radius:6px;padding:7px 10px}
+.alrt-t{font-size:11px;color:#ff7043;font-weight:bold;margin-bottom:2px}
+.alrt-i{font-size:10px;color:#ff9870}
+.tabs{display:flex;margin-top:10px}
+.tab{flex:1;background:transparent;border:none;border-bottom:1px solid #8b4513;padding:8px 2px;cursor:pointer;font-size:11px;color:#a0826d;border-radius:4px 4px 0 0;font-family:Georgia,serif}
+.tab.on{background:#c8860a;color:#0f0f0f;font-weight:bold;border-bottom:none}
+.page{max-width:700px;margin:0 auto;padding:12px}
+.sec{display:none}
+.sec.on{display:block}
+.cvbox{background:rgba(200,134,10,0.06);border:1px solid #3a2a1a;border-radius:8px;padding:10px;margin-bottom:12px}
+.cvlbl{font-size:10px;color:#a0826d;text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+.cvrow{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.bqte{width:34px;height:34px;background:#1a0a00;border:1px solid #8b4513;border-radius:4px;color:#c8860a;cursor:pointer;font-size:20px;display:inline-flex;align-items:center;justify-content:center;padding:0;flex-shrink:0}
+.icv{width:58px;background:#1a0a00;border:1px solid #8b4513;border-radius:4px;padding:5px 6px;color:#f5deb3;font-size:15px;text-align:center}
+.bapp{background:#1a3a1a;border:1px solid #3a6a3a;color:#6aaa6a;padding:7px 12px;border-radius:5px;cursor:pointer;font-size:11px}
+.ftabs{display:flex;gap:8px;margin-bottom:12px}
+.bfourn{flex:1;background:rgba(255,255,255,0.03);border:1px solid #3a2a1a;border-radius:8px;padding:10px;cursor:pointer;color:#a0826d;text-align:left}
+.bfourn.on{background:linear-gradient(135deg,#8b4513,#c8860a);border-color:#c8860a;color:#fff}
+.bfourn .fn{font-size:15px;font-weight:bold}
+.bfourn .fs{font-size:10px;margin-top:2px}
+.srch{width:100%;background:rgba(255,255,255,0.04);border:1px solid #3a2a1a;border-radius:6px;padding:9px 11px;color:#f0ead6;font-size:13px;margin-bottom:12px;font-family:Georgia,serif}
+.cath{display:flex;align-items:center;gap:5px;border-bottom:1px solid #2a1a0a;padding-bottom:5px;margin-bottom:7px}
+.cate{font-size:15px}
+.catn{font-size:10px;color:#c8860a;text-transform:uppercase;letter-spacing:2px}
+.catt{font-size:9px;color:#3a2a1a;margin-left:auto}
+.catg{margin-bottom:16px}
+.prd{padding:9px;margin-bottom:5px;background:rgba(255,255,255,0.02);border-radius:6px;border:1px solid #2a1a0a}
+.prd.hss{background:rgba(200,60,0,0.06);border-color:#5a2a1a}
+.ptop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px}
+.pnom{font-size:13px;color:#f5deb3}
+.pnotes{font-size:9px;color:#5a3a2a;margin-top:1px}
+.bhss{font-size:9px;color:#ff7043;background:rgba(200,60,0,0.2);padding:1px 4px;border-radius:3px;margin-left:4px}
+.pact{display:flex;gap:1px}
+.bico{background:transparent;border:none;cursor:pointer;font-size:15px;padding:2px 3px}
+.pbot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.qrow{display:flex;align-items:center;gap:5px}
+.iqte{width:52px;background:#1a0a00;border:1px solid #8b4513;border-radius:4px;padding:4px 5px;color:#f5deb3;font-size:14px;text-align:center}
+.qun{font-size:11px;color:#a0826d}
+.pbox{text-align:right}
+.psugg{font-size:9px;color:#6aaa6a;margin-bottom:1px}
+.psugg span{cursor:pointer;text-decoration:underline;font-weight:bold}
+.ptot{font-size:14px;color:#c8860a;font-weight:bold}
+.punit{font-size:9px;color:#5a3a2a}
+.pprec{font-size:9px;color:#4a2a1a}
+.ftr{margin-top:12px;padding:12px;background:rgba(200,134,10,0.08);border:1px solid #c8860a;border-radius:8px}
+.ftrtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px}
+.ftrlbl{font-size:10px;color:#a0826d}
+.ftramt{font-size:20px;color:#c8860a;font-weight:bold}
+.ftrnb{font-size:9px;color:#5a3a2a}
+.bprint{background:#0a1a0a;border:1px solid #3a6a3a;color:#6aaa6a;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:11px}
+.ftrbtns{display:flex;gap:7px}
+.badd{flex:1;background:transparent;border:1px solid #8b4513;color:#c8860a;padding:10px;border-radius:6px;cursor:pointer;font-size:12px}
+.bval{flex:2;background:linear-gradient(135deg,#8b4513,#c8860a);border:none;color:#fff;padding:10px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:bold}
+.bval.ok{background:#3a6a3a}
+.cathdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cathdrt{font-weight:normal;color:#f5deb3;font-size:17px}
+.bnew{background:linear-gradient(135deg,#8b4513,#c8860a);border:none;color:#fff;padding:7px 14px;border-radius:6px;cursor:pointer;font-size:12px}
+.cfit{display:flex;align-items:center;gap:8px;padding:7px 9px;margin-bottom:3px;background:rgba(255,255,255,0.02);border-radius:6px;border:1px solid #2a1a0a}
+.cfinfo{flex:1;min-width:0}
+.cfnom{font-size:12px;color:#f5deb3}
+.cfcat{font-size:9px;color:#5a3a2a}
+.cfprix{text-align:right;flex-shrink:0;font-size:11px}
+.histitem{background:rgba(255,255,255,0.02);border:1px solid #3a2a1a;border-radius:8px;padding:11px;margin-bottom:9px}
+.histop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px}
+.hisf{font-size:14px;color:#f5deb3}
+.hism{font-size:10px;color:#5a3a2a}
+.hist{font-size:15px;color:#c8860a;font-weight:bold}
+.histags{display:flex;flex-wrap:wrap;gap:3px}
+.histag{background:#1a0a00;border:1px solid #3a2a1a;border-radius:3px;padding:2px 6px;font-size:10px;color:#a0826d}
+.factitem{background:rgba(255,255,255,0.02);border:1px solid #3a2a1a;border-radius:8px;padding:11px;margin-bottom:9px}
+.empty{text-align:center;padding:35px 0;color:#5a3a2a;font-size:12px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.88);display:none;align-items:flex-end;justify-content:center;z-index:100}
+.overlay.on{display:flex}
+.mbox{background:#1a0a00;border:1px solid #8b4513;border-radius:14px 14px 0 0;padding:16px 14px 24px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto}
+.mhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.mtitle{color:#f5deb3;font-weight:normal;font-size:16px}
+.bclose{background:transparent;border:none;color:#a0826d;font-size:22px;cursor:pointer;line-height:1}
+.field{margin-bottom:10px}
+.field label{font-size:10px;color:#a0826d;display:block;margin-bottom:2px;text-transform:uppercase;letter-spacing:1px}
+.field input,.field select{width:100%;background:#0f0f0f;border:1px solid #3a2a1a;border-radius:5px;padding:8px 10px;color:#f0ead6;font-size:13px;font-family:Georgia,serif}
+.mbtns{display:flex;gap:7px;margin-top:14px}
+.bcanc{flex:1;background:transparent;border:1px solid #3a2a1a;color:#a0826d;padding:11px;border-radius:6px;cursor:pointer;font-family:Georgia,serif}
+.bsave{flex:2;background:linear-gradient(135deg,#8b4513,#c8860a);border:none;color:#fff;padding:11px;border-radius:6px;cursor:pointer;font-weight:bold;font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="h-left">
+      <div class="sub">Brasserie · Cannes la Bocca</div>
+      <div class="title">Carnet de Commandes</div>
+      <div class="week" id="wk"></div>
+    </div>
+    <div class="h-right">
+      <div class="blabel">Budget total</div>
+      <div class="bamt" id="btot">0,00 €</div>
+      <div class="exim">
+        <button onclick="doExport()">⬇️ Exporter</button>
+        <label>⬆️ Importer<input type="file" accept=".json" onchange="doImport(event)" style="display:none"/></label>
+      </div>
+    </div>
+  </div>
+  <div id="alrt"></div>
+  <div class="tabs">
+    <button class="tab on" onclick="goTab('cmd')">📋 Commandes</button>
+    <button class="tab" onclick="goTab('cat')">📦 Catalogue</button>
+    <button class="tab" onclick="goTab('fac')">📸 Factures</button>
+    <button class="tab" onclick="goTab('his')">🕐 Historique</button>
+  </div>
+</div>
+
+<div class="page">
+  <div class="sec on" id="s-cmd">
+    <div class="cvbox">
+      <div class="cvlbl">Couverts prévus cette semaine</div>
+      <div class="cvrow">
+        <button class="bqte" onclick="chgCov(-5)">−</button>
+        <input class="icv" type="number" id="icv" value="40" onchange="setCov(this.value)"/>
+        <button class="bqte" onclick="chgCov(5)">+</button>
+        <button class="bapp" onclick="applySugg()">✓ Appliquer les quantités</button>
+      </div>
+    </div>
+    <div class="ftabs" id="ftabs"></div>
+    <input class="srch" type="text" placeholder="🔍 Rechercher un produit..." id="srch" oninput="renderProds()"/>
+    <div id="prods"></div>
+    <div class="ftr">
+      <div class="ftrtop">
+        <div>
+          <div class="ftrlbl" id="ftrlbl">Total Métro</div>
+          <div class="ftramt" id="ftramt">0,00 €</div>
+          <div class="ftrnb" id="ftrnb"></div>
+        </div>
+        <button class="bprint" onclick="doPrint()">🖨️ Bon de commande</button>
+      </div>
+      <div class="ftrbtns">
+        <button class="badd" onclick="openModal(null)">+ Produit</button>
+        <button class="bval" id="bval" onclick="valider()">Valider la commande</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" id="s-cat">
+    <div class="cathdr">
+      <span class="cathdrt">Catalogue</span>
+      <button class="bnew" onclick="openModal(null)">+ Nouveau</button>
+    </div>
+    <div id="catlist"></div>
+  </div>
+
+  <div class="sec" id="s-fac">
+    <div style="font-size:17px;font-weight:normal;color:#f5deb3;margin-bottom:12px">📸 Factures analysées</div>
+    <div id="faclist"></div>
+  </div>
+
+  <div class="sec" id="s-his">
+    <div style="font-size:17px;font-weight:normal;color:#f5deb3;margin-bottom:12px">Historique des commandes</div>
+    <div id="hislist"></div>
+  </div>
+</div>
+
+<div class="overlay" id="modal">
+  <div class="mbox">
+    <div class="mhdr">
+      <span class="mtitle" id="mtitle">Nouveau produit</span>
+      <button class="bclose" onclick="closeModal()">×</button>
+    </div>
+    <div class="field"><label>Nom *</label><input type="text" id="f-nom"/></div>
+    <div class="field"><label>Prix unitaire (€)</label><input type="number" step="0.01" id="f-prix"/></div>
+    <div class="field"><label>Quantité *</label><input type="number" step="0.5" id="f-qte"/></div>
+    <div class="field"><label>Qté de référence (couverts)</label><input type="number" step="0.5" id="f-qbase"/></div>
+    <div class="field"><label>Couverts de référence</label><input type="number" id="f-cbase" value="40"/></div>
+    <div class="field"><label>Notes</label><input type="text" id="f-notes"/></div>
+    <div class="field"><label>Fournisseur</label>
+      <select id="f-fourn"><option>Métro</option><option>Ginest</option></select></div>
+    <div class="field"><label>Catégorie</label>
+      <select id="f-cat">
+        <option>Viandes &amp; Volailles</option><option>Poissons &amp; Fruits de mer</option>
+        <option>Légumes &amp; Fruits</option><option>Produits laitiers</option>
+        <option>Épicerie sèche</option><option>Boissons</option>
+        <option>Pain &amp; Viennoiserie</option><option>Entretien &amp; Hygiène</option>
+      </select></div>
+    <div class="field"><label>Unité</label>
+      <select id="f-unite">
+        <option>kg</option><option>g</option><option>L</option><option>cl</option>
+        <option>pièce(s)</option><option>boîte(s)</option><option>sachet(s)</option>
+        <option>carton(s)</option><option>bouteille(s)</option>
+      </select></div>
+    <div class="mbtns">
+      <button class="bcanc" onclick="closeModal()">Annuler</button>
+      <button class="bsave" onclick="saveProd()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var CATS = {
+  "Viandes & Volailles":"🥩","Poissons & Fruits de mer":"🐟","Légumes & Fruits":"🥦",
+  "Produits laitiers":"🧀","Épicerie sèche":"🫙","Boissons":"🍷",
+  "Pain & Viennoiserie":"🥖","Entretien & Hygiène":"🧴"
+};
+
+var INIT = [
+  {id:1,nom:"Entrecôte",cat:"Viandes & Volailles",fourn:"Métro",qte:2,un:"pièce(s)",px:0,pp:0,nt:"",qb:2,cb:40},
+  {id:2,nom:"Bavette",cat:"Viandes & Volailles",fourn:"Métro",qte:1,un:"kg",px:0,pp:0,nt:"",qb:1,cb:40},
+  {id:3,nom:"Poulets fermiers",cat:"Viandes & Volailles",fourn:"Métro",qte:6,un:"pièce(s)",px:0,pp:0,nt:"",qb:6,cb:40},
+  {id:4,nom:"Chorizo",cat:"Viandes & Volailles",fourn:"Métro",qte:4,un:"pièce(s)",px:0,pp:0,nt:"",qb:4,cb:40},
+  {id:5,nom:"Foie de veau",cat:"Viandes & Volailles",fourn:"Métro",qte:1,un:"kg",px:15.96,pp:0,nt:"demi",qb:1,cb:40},
+  {id:6,nom:"Lieu noir",cat:"Poissons & Fruits de mer",fourn:"Métro",qte:3,un:"kg",px:19.11,pp:0,nt:"",qb:3,cb:40},
+  {id:7,nom:"Patates",cat:"Légumes & Fruits",fourn:"Métro",qte:6,un:"carton(s)",px:2.74,pp:0,nt:"",qb:6,cb:40},
+  {id:8,nom:"Patates douces",cat:"Légumes & Fruits",fourn:"Métro",qte:3,un:"kg",px:0,pp:0,nt:"",qb:3,cb:40},
+  {id:9,nom:"Courgettes",cat:"Légumes & Fruits",fourn:"Métro",qte:3,un:"kg",px:3.07,pp:0,nt:"",qb:3,cb:40},
+  {id:10,nom:"Poivrons rouges",cat:"Légumes & Fruits",fourn:"Métro",qte:3,un:"kg",px:16.46,pp:0,nt:"",qb:3,cb:40},
+  {id:11,nom:"Pommes Golden",cat:"Légumes & Fruits",fourn:"Métro",qte:2,un:"carton(s)",px:10.96,pp:0,nt:"",qb:2,cb:40},
+  {id:12,nom:"Carottes",cat:"Légumes & Fruits",fourn:"Métro",qte:2.5,un:"kg",px:4.94,pp:0,nt:"1 sac",qb:2.5,cb:40},
+  {id:13,nom:"Tomates",cat:"Légumes & Fruits",fourn:"Métro",qte:1,un:"carton(s)",px:3.49,pp:0,nt:"colis 6kg",qb:1,cb:40},
+  {id:14,nom:"Champignons",cat:"Légumes & Fruits",fourn:"Métro",qte:1,un:"carton(s)",px:11.51,pp:0,nt:"",qb:1,cb:40},
+  {id:15,nom:"Salade Romana",cat:"Légumes & Fruits",fourn:"Métro",qte:8,un:"sachet(s)",px:2.74,pp:0,nt:"",qb:8,cb:40},
+  {id:16,nom:"Persil",cat:"Légumes & Fruits",fourn:"Métro",qte:1,un:"sachet(s)",px:7.66,pp:0,nt:"",qb:1,cb:40},
+  {id:17,nom:"Oeufs extra",cat:"Produits laitiers",fourn:"Métro",qte:2,un:"boîte(s)",px:7.96,pp:0,nt:"",qb:2,cb:40},
+  {id:18,nom:"Oeufs vrac",cat:"Produits laitiers",fourn:"Métro",qte:30,un:"pièce(s)",px:0,pp:0,nt:"",qb:30,cb:40},
+  {id:19,nom:"Mascarpone",cat:"Produits laitiers",fourn:"Métro",qte:2,un:"kg",px:3.17,pp:0,nt:"",qb:2,cb:40},
+  {id:20,nom:"Crème 15%",cat:"Produits laitiers",fourn:"Métro",qte:6,un:"L",px:2.80,pp:0,nt:"",qb:6,cb:40},
+  {id:21,nom:"Lait entier",cat:"Produits laitiers",fourn:"Métro",qte:6,un:"L",px:10.87,pp:0,nt:"",qb:6,cb:40},
+  {id:22,nom:"Chèvre frais",cat:"Produits laitiers",fourn:"Métro",qte:1,un:"kg",px:6.40,pp:0,nt:"",qb:1,cb:40},
+  {id:23,nom:"Chèvres cendrés",cat:"Produits laitiers",fourn:"Métro",qte:3,un:"pièce(s)",px:5.81,pp:0,nt:"",qb:3,cb:40},
+  {id:24,nom:"Brie",cat:"Produits laitiers",fourn:"Métro",qte:1,un:"pièce(s)",px:10.28,pp:0,nt:"",qb:1,cb:40},
+  {id:25,nom:"Beurre",cat:"Produits laitiers",fourn:"Métro",qte:1,un:"kg",px:26.24,pp:0,nt:"",qb:1,cb:40},
+  {id:26,nom:"Penne",cat:"Épicerie sèche",fourn:"Métro",qte:2.5,un:"kg",px:2.17,pp:0,nt:"",qb:2.5,cb:40},
+  {id:27,nom:"Riz Basmati",cat:"Épicerie sèche",fourn:"Métro",qte:3,un:"kg",px:13.35,pp:0,nt:"",qb:3,cb:40},
+  {id:28,nom:"Câpres",cat:"Épicerie sèche",fourn:"Métro",qte:1,un:"boîte(s)",px:3.82,pp:0,nt:"",qb:1,cb:40},
+  {id:29,nom:"Anchois",cat:"Épicerie sèche",fourn:"Métro",qte:1,un:"boîte(s)",px:15.42,pp:0,nt:"",qb:1,cb:40},
+  {id:30,nom:"Vinaigre balsamique",cat:"Épicerie sèche",fourn:"Métro",qte:5,un:"L",px:14.89,pp:0,nt:"Modène 5L",qb:5,cb:40},
+  {id:31,nom:"Vinaigre de vin",cat:"Épicerie sèche",fourn:"Métro",qte:1,un:"L",px:2.95,pp:0,nt:"",qb:1,cb:40},
+  {id:34,nom:"Foie gras",cat:"Viandes & Volailles",fourn:"Métro",qte:1,un:"kg",px:0,pp:0,nt:"",qb:1,cb:40},
+  {id:35,nom:"Saumon filets",cat:"Poissons & Fruits de mer",fourn:"Métro",qte:2,un:"kg",px:0,pp:0,nt:"filets + pavés tartare/grillé",qb:2,cb:40},
+  {id:36,nom:"Thon",cat:"Poissons & Fruits de mer",fourn:"Métro",qte:1,un:"boîte(s)",px:0,pp:0,nt:"boîte ou frais",qb:1,cb:40},
+  {id:37,nom:"Feta",cat:"Produits laitiers",fourn:"Métro",qte:1,un:"kg",px:0,pp:0,nt:"",qb:1,cb:40},
+  {id:38,nom:"Concombre",cat:"Légumes & Fruits",fourn:"Métro",qte:3,un:"pièce(s)",px:0,pp:0,nt:"",qb:3,cb:40},
+  {id:39,nom:"Oignons rouges",cat:"Légumes & Fruits",fourn:"Métro",qte:2,un:"kg",px:0,pp:0,nt:"",qb:2,cb:40},
+  {id:40,nom:"Oignons jaunes",cat:"Légumes & Fruits",fourn:"Métro",qte:2,un:"kg",px:0,pp:0,nt:"",qb:2,cb:40},
+  {id:41,nom:"Échalotes",cat:"Légumes & Fruits",fourn:"Métro",qte:1,un:"kg",px:0,pp:0,nt:"",qb:1,cb:40},
+  {id:42,nom:"Cébette",cat:"Légumes & Fruits",fourn:"Métro",qte:1,un:"botte(s)",px:0,pp:0,nt:"",qb:1,cb:40},
+  {id:43,nom:"Avocat",cat:"Légumes & Fruits",fourn:"Métro",qte:6,un:"pièce(s)",px:0,pp:0,nt:"",qb:6,cb:40},
+  {id:44,nom:"Citron",cat:"Légumes & Fruits",fourn:"Métro",qte:1,un:"kg",px:0,pp:0,nt:"agrumes",qb:1,cb:40},
+  {id:45,nom:"Orange",cat:"Légumes & Fruits",fourn:"Métro",qte:1,un:"kg",px:0,pp:0,nt:"agrumes",qb:1,cb:40},
+  {id:46,nom:"Pommes",cat:"Légumes & Fruits",fourn:"Métro",qte:2,un:"kg",px:0,pp:0,nt:"tarte normande",qb:2,cb:40},
+  {id:47,nom:"Baguette",cat:"Pain & Viennoiserie",fourn:"Métro",qte:10,un:"pièce(s)",px:0,pp:0,nt:"",qb:10,cb:40},
+  {id:48,nom:"Huile d'olive",cat:"Épicerie sèche",fourn:"Métro",qte:1,un:"L",px:0,pp:0,nt:"",qb:1,cb:40},
+  {id:49,nom:"Pesto",cat:"Épicerie sèche",fourn:"Métro",qte:1,un:"boîte(s)",px:0,pp:0,nt:"",qb:1,cb:40},
+  {id:50,nom:"Truffe (purée)",cat:"Épicerie sèche",fourn:"Métro",qte:1,un:"boîte(s)",px:0,pp:0,nt:"purée maison",qb:1,cb:40},
+  {id:51,nom:"Chocolat noir",cat:"Épicerie sèche",fourn:"Métro",qte:1,un:"kg",px:0,pp:0,nt:"",qb:1,cb:40},
+  {id:52,nom:"Rhum",cat:"Boissons",fourn:"Métro",qte:1,un:"bouteille(s)",px:0,pp:0,nt:"baba au rhum",qb:1,cb:40},
+  {id:53,nom:"Farine",cat:"Épicerie sèche",fourn:"Métro",qte:5,un:"kg",px:0,pp:0,nt:"brioche / baba",qb:5,cb:40},
+  {id:32,nom:"Filets de dorade royale",cat:"Poissons & Fruits de mer",fourn:"Ginest",qte:1,un:"carton(s)",px:0,pp:0,nt:"5kg/carton · calibre 170/220g · IQF",qb:1,cb:40},
+  {id:33,nom:"Cuisses de poulet désossées",cat:"Viandes & Volailles",fourn:"Ginest",qte:1,un:"carton(s)",px:0,pp:0,nt:"5kg/carton · calibre 190/210g · IQF",qb:1,cb:40}
+];
+
+var INIT_FACS = [
+  {id:1744632000000,fourn:"Métro",date:"14/04/2026",da:"14/04/2026",total:1051.63,prods:[
+    {nom:"Oeufs extra",px:7.96,un:"boîte(s)"},{nom:"Crème 15%",px:2.80,un:"L"},
+    {nom:"Beurre",px:26.24,un:"kg"},{nom:"Lait entier",px:10.87,un:"L"},
+    {nom:"Pommes Golden",px:10.96,un:"kg"},{nom:"Courgettes",px:3.07,un:"kg"},
+    {nom:"Carottes",px:4.94,un:"kg"},{nom:"Persil",px:7.66,un:"sachet(s)"},
+    {nom:"Patates",px:2.74,un:"kg"},{nom:"Champignons",px:11.51,un:"kg"},
+    {nom:"Lieu noir",px:19.11,un:"kg"},{nom:"Poivrons rouges",px:16.46,un:"kg"},
+    {nom:"Tomates",px:3.49,un:"kg"},{nom:"Salade Romana",px:2.74,un:"sachet(s)"},
+    {nom:"Mascarpone",px:3.17,un:"pot"},{nom:"Chèvres cendrés",px:5.81,un:"pièce(s)"},
+    {nom:"Brie",px:10.28,un:"pièce(s)"},{nom:"Chèvre frais",px:6.40,un:"kg"},
+    {nom:"Penne",px:2.17,un:"kg"},{nom:"Riz Basmati",px:13.35,un:"kg"},
+    {nom:"Câpres",px:3.82,un:"boîte(s)"},{nom:"Anchois",px:15.42,un:"boîte(s)"},
+    {nom:"Vinaigre balsamique",px:14.89,un:"5L"},{nom:"Vinaigre de vin",px:2.95,un:"L"},
+    {nom:"Foie de veau",px:15.96,un:"kg"}
+  ]}
+];
+
+function gl(k,fb){try{var s=localStorage.getItem(k);return s?JSON.parse(s):fb;}catch(e){return fb;}}
+function sl(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+var prods = gl("p5", INIT);
+var hist  = gl("h5", []);
+var facs  = gl("f5", INIT_FACS);
+var cov   = gl("c5", 40);
+var fourn = "Métro";
+var editId = null;
+
+function fmt(n){return (Math.round(n*100)/100).toFixed(2).replace(".",",")+" \u20ac";}
+function sugg(p){if(!p.qb||!p.cb)return p.qte;return Math.round((p.qb/p.cb)*cov*10)/10;}
+function week(){
+  var n=new Date(),s=new Date(n);
+  s.setDate(n.getDate()-n.getDay()+1);
+  var e=new Date(s);e.setDate(s.getDate()+6);
+  return s.toLocaleDateString("fr-FR",{day:"2-digit",month:"long"})+" - "+e.toLocaleDateString("fr-FR",{day:"2-digit",month:"long",year:"numeric"});
+}
+
+function sp(){sl("p5",prods);}
+function sh(){sl("h5",hist);}
+function sf(){sl("f5",facs);}
+
+document.getElementById("wk").textContent = week();
+document.getElementById("icv").value = cov;
+renderAll();
+
+function renderAll(){
+  renderHdr();
+  renderFtabs();
+  renderProds();
+  renderCat();
+  renderFacs();
+  renderHis();
+}
+
+function renderHdr(){
+  var t=prods.reduce(function(s,p){return s+(p.qte*p.px);},0);
+  document.getElementById("btot").textContent=fmt(t);
+  var al=prods.filter(function(p){return p.pp>0&&p.px>p.pp;});
+  var el=document.getElementById("alrt");
+  if(!al.length){el.innerHTML="";return;}
+  var h='<div class="alrt"><div class="alrt-t">&#9888;&#65039; Hausse de prix</div>';
+  al.forEach(function(p){
+    h+='<div class="alrt-i">'+p.nom+' : '+p.pp+' &rarr; <strong>'+p.px+'</strong> &euro; (+'+((p.px-p.pp)/p.pp*100).toFixed(1)+'%)</div>';
+  });
+  el.innerHTML=h+'</div>';
+}
+
+function renderFtabs(){
+  var el=document.getElementById("ftabs");
+  el.innerHTML=["Métro","Ginest"].map(function(f){
+    var t=prods.filter(function(p){return p.fourn===f;}).reduce(function(s,p){return s+(p.qte*p.px);},0);
+    var n=prods.filter(function(p){return p.fourn===f;}).length;
+    return '<button class="bfourn'+(f===fourn?" on":"")+'" onclick="setFourn(\''+f+'\')">'
+      +'<div class="fn">'+f+'</div>'
+      +'<div class="fs">'+n+' r\u00e9f. &middot; '+fmt(t)+'</div>'
+      +'</button>';
+  }).join("");
+}
+
+function setFourn(f){fourn=f;renderFtabs();renderProds();}
+
+function renderProds(){
+  var q=document.getElementById("srch").value.toLowerCase();
+  var list=prods.filter(function(p){
+    return p.fourn===fourn&&(q===""||p.nom.toLowerCase().indexOf(q)>-1||p.cat.toLowerCase().indexOf(q)>-1);
+  });
+  var el=document.getElementById("prods");
+  if(!list.length){el.innerHTML='<div class="empty">Aucun produit trouv\u00e9.</div>';updFtr([]);return;}
+  var groups={};
+  Object.keys(CATS).forEach(function(c){
+    var it=list.filter(function(p){return p.cat===c;});
+    if(it.length)groups[c]=it;
+  });
+  var h="";
+  Object.keys(groups).forEach(function(c){
+    var it=groups[c];
+    var ct=it.reduce(function(s,p){return s+(p.qte*p.px);},0);
+    h+='<div class="catg">';
+    h+='<div class="cath"><span class="cate">'+CATS[c]+'</span><span class="catn">'+c+'</span><span class="catt">'+fmt(ct)+'</span></div>';
+    it.forEach(function(p){h+=prodRow(p);});
+    h+='</div>';
+  });
+  el.innerHTML=h;
+  updFtr(list);
+}
+
+function prodRow(p){
+  var hss=p.pp>0&&p.px>p.pp;
+  var sg=sugg(p);
+  var ds=Math.abs(sg-p.qte)>0.01;
+  var h='<div class="prd'+(hss?" hss":"")+'">';
+  h+='<div class="ptop"><div>';
+  h+='<div class="pnom">'+p.nom+(hss?'<span class="bhss">&#9650; prix</span>':'')+'</div>';
+  if(p.nt)h+='<div class="pnotes">'+p.nt+'</div>';
+  h+='</div><div class="pact">';
+  h+='<button class="bico" onclick="openModal('+p.id+')">&#9999;&#65039;</button>';
+  h+='<button class="bico" onclick="delProd('+p.id+')">&#128465;</button>';
+  h+='</div></div>';
+  h+='<div class="pbot"><div class="qrow">';
+  h+='<button class="bqte" onclick="chgQte('+p.id+','+(p.qte-0.5)+')">&#8722;</button>';
+  h+='<input class="iqte" type="number" value="'+p.qte+'" step="0.5" min="0" onchange="chgQte('+p.id+',this.value)"/>';
+  h+='<button class="bqte" onclick="chgQte('+p.id+','+(p.qte+0.5)+')">+</button>';
+  h+='<span class="qun">'+p.un+'</span>';
+  h+='</div><div class="pbox">';
+  if(ds)h+='<div class="psugg">Sugg\u00e9r\u00e9 : <span onclick="chgQte('+p.id+','+sg+')">'+sg+' '+p.un+'</span></div>';
+  h+='<div class="ptot">'+fmt(p.qte*p.px)+'</div>';
+  h+='<div class="punit">'+(p.px>0?'<span style="color:#c8860a">'+p.px+' \u20ac</span>/'+p.un:'&#9888;&#65039; prix \u00e0 saisir')+'</div>';
+  if(hss)h+='<div class="pprec">avant: '+p.pp+' \u20ac</div>';
+  h+='</div></div></div>';
+  return h;
+}
+
+function updFtr(list){
+  var t=list.reduce(function(s,p){return s+(p.qte*p.px);},0);
+  document.getElementById("ftrlbl").textContent="Total "+fourn;
+  document.getElementById("ftramt").textContent=fmt(t);
+  document.getElementById("ftrnb").textContent=list.length+" r\u00e9f\u00e9rence(s)";
+}
+
+function chgQte(id,val){
+  var v=Math.max(0,parseFloat(val)||0);
+  prods=prods.map(function(p){return p.id===id?Object.assign({},p,{qte:v}):p;});
+  sp();renderProds();renderHdr();renderFtabs();
+}
+
+function chgCov(d){cov=Math.max(10,cov+d);document.getElementById("icv").value=cov;sl("c5",cov);}
+function setCov(v){cov=parseInt(v)||40;sl("c5",cov);}
+function applySugg(){
+  prods=prods.map(function(p){return p.fourn===fourn?Object.assign({},p,{qte:sugg(p)}):p;});
+  sp();renderProds();renderHdr();renderFtabs();
+}
+
+function delProd(id){
+  if(!confirm("Supprimer ce produit ?"))return;
+  prods=prods.filter(function(p){return p.id!==id;});
+  sp();renderAll();
+}
+
+function valider(){
+  var items=prods.filter(function(p){return p.fourn===fourn;});
+  var t=items.reduce(function(s,p){return s+(p.qte*p.px);},0);
+  hist=[{id:Date.now(),date:new Date().toLocaleDateString("fr-FR"),sem:week(),fourn:fourn,cov:cov,items:items.map(function(p){return Object.assign({},p);}),total:t}].concat(hist);
+  sh();renderHis();
+  var b=document.getElementById("bval");
+  b.textContent="&#10003; Valid\u00e9e !";b.className="bval ok";
+  setTimeout(function(){b.textContent="Valider la commande";b.className="bval";},3000);
+}
+
+function doPrint(){
+  var items=prods.filter(function(p){return p.fourn===fourn&&p.qte>0;});
+  var t=items.reduce(function(s,p){return s+(p.qte*p.px);},0);
+  var rows="";
+  items.forEach(function(p){
+    var bg=rows.split("<tr").length%2===0?"#fafafa":"#fff";
+    rows+="<tr style='background:"+bg+"'>";
+    rows+="<td>"+(CATS[p.cat]||"")+" "+p.nom+(p.nt?" <small style='color:#999'>"+p.nt+"</small>":"")+"</td>";
+    rows+="<td style='text-align:center;font-weight:bold'>"+p.qte+" "+p.un+"</td>";
+    rows+="<td style='text-align:right'>"+(p.px>0?p.px+" \u20ac":"--")+"</td>";
+    rows+="<td style='text-align:right;font-weight:bold'>"+(p.px>0?fmt(p.qte*p.px):"--")+"</td>";
+    rows+="</tr>";
+  });
+  var win=window.open("","_blank");
+  if(!win)return;
+  win.document.open();
+  win.document.write("<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Commande</title>");
+  win.document.write("<style>body{font-family:Arial,sans-serif;padding:20px;color:#111}");
+  win.document.write("h1{font-size:20px}");
+  win.document.write(".m{font-size:12px;color:#666;margin-bottom:16px;border-bottom:2px solid #111;padding-bottom:10px}");
+  win.document.write("table{width:100%;border-collapse:collapse}");
+  win.document.write("th{background:#f0f0f0;padding:8px;text-align:left;font-size:11px;border-bottom:2px solid #ccc;text-transform:uppercase}");
+  win.document.write("td{padding:7px 8px;font-size:13px;border-bottom:1px solid #eee;vertical-align:top}");
+  win.document.write(".tot{font-weight:bold;text-align:right;padding-top:12px;font-size:14px;border-top:2px solid #111}");
+  win.document.write("@media print{button{display:none}}</style></head><body>");
+  win.document.write("<h1>Bon de commande -- "+fourn+"</h1>");
+  win.document.write("<div class='m'>Semaine du "+week()+" &middot; "+cov+" couverts &middot; "+new Date().toLocaleDateString("fr-FR")+"</div>");
+  win.document.write("<table><thead><tr><th>Produit</th><th style='text-align:center'>Qté</th><th style='text-align:right'>Prix/u</th><th style='text-align:right'>Total</th></tr></thead><tbody>");
+  win.document.write(rows);
+  win.document.write("</tbody></table>");
+  win.document.write("<p class='tot'>Total estimé : "+fmt(t)+"</p>");
+  win.document.write("</body></html>");
+  win.document.close();
+  setTimeout(function(){win.print();},400);
+}
+
+function renderCat(){
+  var el=document.getElementById("catlist");
+  var h="";
+  ["Métro","Ginest"].forEach(function(f){
+    var it=prods.filter(function(p){return p.fourn===f;});
+    h+='<div style="margin-bottom:20px">';
+    h+='<div style="font-size:14px;color:#c8860a;border-bottom:1px solid #3a2a1a;padding-bottom:5px;margin-bottom:8px">'+f+' &mdash; '+it.length+' produit(s)</div>';
+    it.forEach(function(p){
+      var hss=p.pp>0&&p.px>p.pp;
+      h+='<div class="cfit">';
+      h+='<span style="font-size:15px">'+(CATS[p.cat]||"")+'</span>';
+      h+='<div class="cfinfo"><div class="cfnom">'+p.nom+'</div><div class="cfcat">'+p.cat+'</div></div>';
+      h+='<div class="cfprix" style="color:'+(hss?"#ff7043":"#a0826d")+'">'+(p.px>0?p.px+" \u20ac/"+p.un:"--")+(hss?" &#9650;":"")+'</div>';
+      h+='<button class="bico" onclick="openModal('+p.id+')">&#9999;&#65039;</button>';
+      h+='<button class="bico" onclick="delProd('+p.id+')">&#128465;</button>';
+      h+='</div>';
+    });
+    h+='</div>';
+  });
+  el.innerHTML=h;
+}
+
+function renderFacs(){
+  var el=document.getElementById("faclist");
+  if(!el)return;
+  if(!facs.length){
+    el.innerHTML='<div class="empty"><div style="font-size:32px;margin-bottom:8px">&#128248;</div>Aucune facture enregistr\u00e9e.<br><br><span style="font-size:11px">Envoie une photo de facture<br>dans ta conversation Claude.</span></div>';
+    return;
+  }
+  var h="";
+  facs.forEach(function(f){
+    h+='<div class="factitem">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px">';
+    h+='<div><div class="hisf">'+(f.fourn||"?")+'</div>';
+    h+='<div class="hism">Facture du '+(f.date||"?")+(f.da&&f.da!==f.date?" &middot; Analys\u00e9e le "+f.da:"")+'</div></div>';
+    h+='<div style="text-align:right">';
+    if(f.total>0)h+='<div class="hist">'+fmt(f.total)+'</div>';
+    h+='<button class="bico" style="font-size:12px;color:#5a3a2a" onclick="delFac('+f.id+')">&#128465;</button>';
+    h+='</div></div>';
+    if(f.prods&&f.prods.length){
+      h+='<div class="histags">';
+      f.prods.slice(0,8).forEach(function(p){
+        h+='<span class="histag">'+p.nom+(p.px>0?" &middot; "+p.px+"\u20ac":"")+'</span>';
+      });
+      if(f.prods.length>8)h+='<span style="font-size:10px;color:#5a3a2a">+'+(f.prods.length-8)+'</span>';
+      h+='</div>';
+    }
+    h+='</div>';
+  });
+  el.innerHTML=h;
+}
+
+function delFac(id){
+  if(!confirm("Supprimer cette facture ?"))return;
+  facs=facs.filter(function(f){return f.id!==id;});
+  sf();renderFacs();
+}
+
+function renderHis(){
+  var el=document.getElementById("hislist");
+  if(!hist.length){el.innerHTML='<div class="empty"><div style="font-size:32px;margin-bottom:8px">&#128203;</div>Aucune commande valid\u00e9e</div>';return;}
+  var h="";
+  hist.forEach(function(c){
+    h+='<div class="histitem">';
+    h+='<div class="histop"><div><div class="hisf">'+c.fourn+'</div>';
+    h+='<div class="hism">Le '+c.date+' &middot; '+(c.cov||"?")+" couverts"+'</div></div>';
+    h+='<div class="hist">'+fmt(c.total)+'</div></div>';
+    h+='<div class="histags">';
+    (c.items||[]).slice(0,6).forEach(function(p){
+      h+='<span class="histag">'+p.qte+' '+p.un+' '+p.nom+'</span>';
+    });
+    if((c.items||[]).length>6)h+='<span style="font-size:10px;color:#5a3a2a">+'+(c.items.length-6)+'</span>';
+    h+='</div></div>';
+  });
+  el.innerHTML=h;
+}
+
+function goTab(t){
+  ["cmd","cat","fac","his"].forEach(function(id){
+    document.getElementById("s-"+id).className="sec"+(id===t?" on":"");
+  });
+  document.querySelectorAll(".tab").forEach(function(el,i){
+    el.className="tab"+([["cmd","cat","fac","his"][i]===t]?"":"")+( ["cmd","cat","fac","his"][i]===t?" on":"");
+  });
+  if(t==="fac")renderFacs();
+  if(t==="cat")renderCat();
+  if(t==="his")renderHis();
+}
+
+function openModal(id){
+  editId=id;
+  document.getElementById("mtitle").textContent=id?"Modifier le produit":"Nouveau produit";
+  var p=id?prods.find(function(x){return x.id===id;}):null;
+  document.getElementById("f-nom").value=p?p.nom:"";
+  document.getElementById("f-prix").value=p?p.px:"";
+  document.getElementById("f-qte").value=p?p.qte:"";
+  document.getElementById("f-qbase").value=p?(p.qb||""):"";
+  document.getElementById("f-cbase").value=p?(p.cb||40):40;
+  document.getElementById("f-notes").value=p?p.nt:"";
+  document.getElementById("f-fourn").value=p?p.fourn:fourn;
+  document.getElementById("f-cat").value=p?p.cat:"Viandes & Volailles";
+  document.getElementById("f-unite").value=p?p.un:"kg";
+  document.getElementById("modal").className="overlay on";
+}
+
+function closeModal(){document.getElementById("modal").className="overlay";editId=null;}
+
+function saveProd(){
+  var nom=document.getElementById("f-nom").value.trim();
+  var qte=parseFloat(document.getElementById("f-qte").value)||0;
+  if(!nom||!qte)return;
+  var np=parseFloat(document.getElementById("f-prix").value)||0;
+  var pp=0;
+  if(editId){var old=prods.find(function(x){return x.id===editId;});if(old&&old.px>0&&np!==old.px)pp=old.px;else if(old)pp=old.pp;}
+  var p={id:editId||Date.now(),nom:nom,cat:document.getElementById("f-cat").value,
+    fourn:document.getElementById("f-fourn").value,qte:qte,un:document.getElementById("f-unite").value,
+    px:np,pp:pp,nt:document.getElementById("f-notes").value,
+    qb:parseFloat(document.getElementById("f-qbase").value)||qte,
+    cb:parseInt(document.getElementById("f-cbase").value)||40};
+  if(editId){prods=prods.map(function(x){return x.id===editId?p:x;});}
+  else{prods=prods.concat([p]);}
+  sp();closeModal();renderAll();
+}
+
+function doExport(){
+  var d=JSON.stringify({prods:prods,hist:hist,facs:facs,cov:cov,date:new Date().toLocaleDateString("fr-FR")},null,2);
+  var b=new Blob([d],{type:"application/json"});
+  var u=URL.createObjectURL(b);
+  var a=document.createElement("a");
+  a.href=u;a.download="brasserie-"+new Date().toISOString().slice(0,10)+".json";a.click();
+  URL.revokeObjectURL(u);
+}
+
+function doImport(e){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(ev){
+    try{
+      var d=JSON.parse(ev.target.result);
+      if(d.prods){prods=d.prods;sp();}
+      if(d.hist){hist=d.hist;sh();}
+      if(d.facs){facs=d.facs;sf();}
+      if(d.cov){cov=d.cov;sl("c5",cov);document.getElementById("icv").value=cov;}
+      renderAll();alert("Donn\u00e9es import\u00e9es !");
+    }catch(err){alert("Fichier invalide.");}
+  };
+  r.readAsText(f);e.target.value="";
+}
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('/sw.js').catch(function(){});
+  });
+}
+</script>
+</body>
+</html>
